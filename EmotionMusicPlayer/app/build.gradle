@@ -15,6 +15,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    dexOptions {
+        incremental true
+    }
 
     buildTypes {
         release {

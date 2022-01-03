@@ -2,6 +2,7 @@ package com.emotion.musicplayer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 
 import android.app.Activity;
@@ -19,6 +20,7 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,12 +64,17 @@ public class EmotionActivity extends AppCompatActivity {
     private ImageView mImageView;
 
     private TextView txtemotion;
-    private Button proceed;
+
+
+
 
     private String emotion;
 
-    private Button mPickImageButton;
-    private Button mTakePhotoButton;
+
+
+    private CardView mPickImageButton;
+    private CardView mTakePhotoButton;
+    private CardView proceed;
 
 
     private Uri mCurrentPhotoUri;
@@ -79,6 +86,9 @@ public class EmotionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emotion);
 
+        LinearLayout li=(LinearLayout)findViewById(R.id.detectlayout);
+        li.setBackgroundColor(Color.parseColor("#bfc7c1"));
+
         mClassificationProgressBar = findViewById(R.id.classification_progress_bar);
 
         txtemotion=findViewById(R.id.txtemotion);
@@ -87,7 +97,7 @@ public class EmotionActivity extends AppCompatActivity {
         mClassifier = new TFLiteImageClassifier(
                 this.getAssets(),
                 MODEL_FILE_NAME,
-                getResources().getStringArray(R.array.emotions));
+                new String[]{"Angry","Disgust","Fear","Happy","Neutral","Sad","Surprise"});
 
         mClassificationResult = new LinkedHashMap<>();
 
@@ -112,9 +122,14 @@ public class EmotionActivity extends AppCompatActivity {
         proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent mIntent=new Intent(EmotionActivity.this, MusicActivity.class);
-                mIntent.putExtra("emotion",emotion);
-                startActivity(mIntent);
+//                Intent mIntent=new Intent(EmotionActivity.this, MusicActivity.class);
+//                mIntent.putExtra("emotion",emotion);
+//                startActivity(mIntent);
+                Toast.makeText(
+                        EmotionActivity.this,
+                        "This Feature is Under Development !! Please Come Back Later",
+                        Toast.LENGTH_LONG
+                ).show();
             }
         });
 
@@ -395,7 +410,7 @@ public class EmotionActivity extends AppCompatActivity {
             }
         }
 
-        Toast.makeText(this, "Detected Emotion :" + emotion, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Detected Emotion :" + emotion, Toast.LENGTH_SHORT).show();
         txtemotion.setText("You Are "+emotion);
         proceed.setEnabled(true);
 

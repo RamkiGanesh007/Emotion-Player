@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,16 +26,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        try {
-            if(PlayerActivity.mediaPlayer!=null)
-            {
-                PlayerActivity.mediaPlayer.stop();
-            }
-        }
-        catch(IllegalStateException ex)
-        {
-            ex.printStackTrace();
-        }
 
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -77,9 +68,14 @@ public class MainActivity extends AppCompatActivity {
         normal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent mIntent=new Intent(MainActivity.this, MusicActivity.class);
-                mIntent.putExtra("emotion","AllSongs");
-                startActivityForResult(mIntent,1);
+//                Intent mIntent=new Intent(MainActivity.this, MusicActivity.class);
+//                mIntent.putExtra("emotion","AllSongs");
+//                startActivityForResult(mIntent,1);
+                Toast.makeText(
+                        MainActivity.this,
+                        "This Feature is Under Development !! Please Come Back Later",
+                        Toast.LENGTH_LONG
+                ).show();
             }
         });
 

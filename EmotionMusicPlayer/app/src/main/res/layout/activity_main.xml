@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/box_inset_layout_padding"
-    android:background="@drawable/bgimg2"
+    android:background="@drawable/emotionmusiclogo"
     tools:context=".MainActivity"
     >
 
@@ -14,7 +14,7 @@
         android:id="@+id/emotion"
         android:layout_width="150dp"
         android:layout_height="100dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="25dp"
         android:layout_marginLeft="48dp"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="25dp"
