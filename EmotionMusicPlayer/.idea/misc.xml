@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/drawable/angry.xml" value="0.1" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/layout/activity_about.xml" value="0.27447916666666666" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/layout/activity_emotion.xml" value="0.264" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/layout/activity_main.xml" value="0.1265625" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/layout/activity_player.xml" value="0.264" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/layout/custom_dialog.xml" value="0.14074074074074075" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/layout/customize_item.xml" value="0.19375" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/layout/customize_playlist.xml" value="0.19375" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/layout/d_item.xml" value="0.19375" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/layout/delete_media.xml" value="0.19375" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/layout/music_activity.xml" value="0.19375" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/layout/nav_header.xml" value="0.19375" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/layout/select_emotions.xml" value="0.19375" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/layout/song_item.xml" value="0.19375" />
+        <entry key="..\:/Users/gk430/Downloads/Emotion-Player-main/Emotion-Player-main/EmotionMusicPlayer/app/src/main/res/menu/drawer_menu.xml" value="0.22760416666666666" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

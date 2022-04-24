@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "980165138100",
+    "project_id": "ml-project-7a192",
+    "storage_bucket": "ml-project-7a192.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:980165138100:android:0920eb800b80c8e2cc29e1",
+        "android_client_info": {
+          "package_name": "com.emotion.musicplayer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "980165138100-1mr5jvf5ta40fob6u2gf5atqm9jduo67.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBK5hwnUMbZw_JaoIoTlAi7XvtbIQHBDwA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "980165138100-1mr5jvf5ta40fob6u2gf5atqm9jduo67.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:980165138100:android:76451b951e73b069cc29e1",
+        "android_client_info": {
+          "package_name": "com.lampa.emotionrecognition"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "980165138100-1mr5jvf5ta40fob6u2gf5atqm9jduo67.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBK5hwnUMbZw_JaoIoTlAi7XvtbIQHBDwA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "980165138100-1mr5jvf5ta40fob6u2gf5atqm9jduo67.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

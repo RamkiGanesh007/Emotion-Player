@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">EmotionMusicPlayer</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_emotion">EmotionActivity</string>
+
+    <string name="pick_image_button">Pick an image</string>
+    <string name="take_photo_button">Take a photo</string>
+    <string name="face">Face</string>
+    <string name="faceless">No face detected</string>
+</resources>
