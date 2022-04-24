@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.nfc.Tag;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
 
+import com.emotion.musicplayer.model.Song;
 import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
 
 import java.io.File;
@@ -49,7 +51,9 @@ public class PlayerActivity extends AppCompatActivity{
     static MediaPlayer mediaPlayer;
 
     int position;
-    ArrayList<File> mySongs;
+    ArrayList<Song> mySongs;
+//    ArrayList<Song> emotionlist;
+//    ArrayList<Song> allsongslist;
     ArrayList<File> favSongs;
 
     private final Handler mainHandler=new Handler();
@@ -154,25 +158,27 @@ public class PlayerActivity extends AppCompatActivity{
                 Intent i = getIntent();
                 Bundle bundle = i.getExtras();
 
-                Log.i("PlAct Returns: ", "" + i.getExtras());
-                mySongs = (ArrayList) bundle.getParcelableArrayList("songs");
+                Log.i("Plact Returns: ", "" + i.getExtras());
+//                mySongs = (ArrayList) bundle.getParcelableArrayList("songs");
+                mySongs=(ArrayList) bundle.getParcelableArrayList("songs");
                 favSongs = (ArrayList) bundle.getParcelableArrayList("favSongs");
 
 
                 String songName = i.getStringExtra("songname");
                 position = bundle.getInt("pos", 0);
                 txtsname.setSelected(true);
-                Uri uri = Uri.parse(mySongs.get(position).toString());
-                sname = mySongs.get(position).getName();
+//                Uri uri = Uri.parse(mySongs.get(position).toString());
+                String songUrl=mySongs.get(position).getSongUrl();
+                sname = mySongs.get(position).getSongName();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (favSongs != null)
-                            if (favSongs.contains(mySongs.get(position))) {
-                                btnfav.setBackgroundResource(R.drawable.ic_favorite);
-                            } else {
-                                btnfav.setBackgroundResource(R.drawable.ic_favorite_blank);
-                            }
+//                        if (favSongs != null)
+//                            if (favSongs.contains(mySongs.get(position))) {
+//                                btnfav.setBackgroundResource(R.drawable.ic_favorite);
+//                            } else {
+//                                btnfav.setBackgroundResource(R.drawable.ic_favorite_blank);
+//                            }
                     }
                 });
                 try {
@@ -180,16 +186,26 @@ public class PlayerActivity extends AppCompatActivity{
                     {
                         mediaPlayer.stop();
                     }
-                    mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-                    mediaPlayer.start();
+                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+//                    mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+                    try {
+                        mediaPlayer.setDataSource(songUrl);
+                        // below line is use to prepare
+                        // and start our media player.
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+//                    mediaPlayer.start();
                     String endTime=createTime(mediaPlayer.getDuration());
                 }
                 catch(IllegalStateException ex)
                 {
                     ex.printStackTrace();
                 }
-
-
 
                 updateSeekbar=new Thread()
                 {
@@ -297,17 +313,23 @@ public class PlayerActivity extends AppCompatActivity{
                     @Override
                     public void onClick(View v) {
                             position = ((position + 1) % mySongs.size());
-                            Uri uri = Uri.parse(mySongs.get(position).toString());
-
+//                            Uri uri = Uri.parse(mySongs.get(position).toString());
+                        String songUrl=mySongs.get(position).getSongUrl();
                             if(mediaPlayer.isPlaying())
                             {
                                 mediaPlayer.stop();
                             }
-                            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-
-                            sname = mySongs.get(position).getName();
-                            txtsname.setText(sname);
+//                            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+                        try {
+                            mediaPlayer.setDataSource(songUrl);
+                            mediaPlayer.prepare();
                             mediaPlayer.start();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                            sname = mySongs.get(position).getSongName();
+                            txtsname.setText(sname);
+//                            mediaPlayer.start();
                             btnplay.setBackgroundResource(R.drawable.ic_pause);
                             startAnimation(imageView);
                             seekmusic.setMax(mediaPlayer.getDuration());
@@ -328,11 +350,22 @@ public class PlayerActivity extends AppCompatActivity{
                         {
                             mediaPlayer.stop();
                         }
-                        Uri uri=Uri.parse(mySongs.get(position).toString());
-                        mediaPlayer=MediaPlayer.create(getApplicationContext(),uri);
-                        sname=mySongs.get(position).getName();
+//                        Uri uri=Uri.parse(mySongs.get(position).toString());
+                        String songUrl=mySongs.get(position).getSongUrl();
+
+//                        mediaPlayer=MediaPlayer.create(getApplicationContext(),uri);
+                        try{
+                            mediaPlayer.setDataSource(songUrl);
+                            mediaPlayer.start();
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                        sname=mySongs.get(position).getSongName();
+
                         txtsname.setText(sname);
-                        mediaPlayer.start();
+//                        mediaPlayer.start();
                         btnplay.setBackgroundResource(R.drawable.ic_pause);
                         startAnimation(imageView);
                         seekmusic.setMax(mediaPlayer.getDuration());
@@ -353,8 +386,8 @@ public class PlayerActivity extends AppCompatActivity{
                     public void onClick(View v) {
                         if (btnfav.getBackground().getConstantState().equals(getDrawable(R.drawable.ic_favorite_blank).getConstantState())) {
 
-                            File file=mySongs.get(position);
-                            makeFavourite(file);
+//                            File file=mySongs.get(position);
+//                            makeFavourite(file);
 
                             btnfav.setBackgroundResource(R.drawable.ic_favorite);
                         } else
@@ -369,7 +402,7 @@ public class PlayerActivity extends AppCompatActivity{
                     @Override
                     public void onClick(View v) {
                         Intent resultIntent=new Intent(PlayerActivity.this, MusicActivity.class);
-                        sname = mySongs.get(position).getName();
+                        sname = mySongs.get(position).getSongName();
                         resultIntent.putExtra(EXTRA_NAME, sname);
                         resultIntent.putExtra("pos",position);
                         setResult(RESULT_OK,resultIntent);
@@ -404,7 +437,7 @@ public class PlayerActivity extends AppCompatActivity{
         if(item.getItemId()==android.R.id.home)
         {
                     Intent resultIntent=new Intent(PlayerActivity.this, MusicActivity.class);
-                    sname = mySongs.get(position).getName();
+                    sname = mySongs.get(position).getSongName();
                     resultIntent.putExtra("songname", sname);
                     resultIntent.putExtra("pos",position);
                     setResult(RESULT_OK,resultIntent);

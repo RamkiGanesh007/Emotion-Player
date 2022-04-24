@@ -1,5 +1,7 @@
     package com.emotion.musicplayer;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -25,7 +27,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.emotion.musicplayer.model.Song;
+import com.emotion.musicplayer.utils.SongUtil;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -46,12 +52,15 @@ import java.util.Map;
 
 public class MusicActivity extends AppCompatActivity  {
     private DrawerLayout drawerLayout;
+    SongUtil songUtil;
     ListView listView;
     String[] items;
     Button hbtnpause;
     TextView txtnp;
     static int position;
     static ArrayList<File> mySongs;
+    ArrayList<Song> allsongslist;
+    ArrayList<Song> emotionlist;
     static ArrayList<File> AllSongs;
     static Map<String,ArrayList<File>> music;
     static ArrayList<File> favSongs;
@@ -295,6 +304,16 @@ public class MusicActivity extends AppCompatActivity  {
 
             AllSongs = findAllSongs(Environment.getExternalStorageDirectory());
 
+            Task<QuerySnapshot> Allsongstask= songUtil.fetchAllSongs();
+            Allsongstask.addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    allsongslist = (ArrayList<Song>)task.getResult().toObjects(Song.class);
+                } else {
+                    Log.w(TAG, "Error getting documents.", task.getException());
+                }
+            });
+
+
             Favourites();
             copyAssets1("/Songs");
 
@@ -304,9 +323,19 @@ public class MusicActivity extends AppCompatActivity  {
 
             for(String i:music.keySet())
                 Log.d("Songs: "+i,""+music.get(i)+"\n");
+            Task<QuerySnapshot> emotionlisttask=songUtil.fetchSongsByEmotion(emotion);
+
+            emotionlisttask.addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    emotionlist =(ArrayList<Song>) task.getResult().toObjects(Song.class);
+                } else {
+                    Log.w(TAG, "Error getting documents.", task.getException());
+                }
+            });
 
             if(!emotion.equals("AllSongs"))
             mySongs=music.get(emotion);
+//            mySongs=emotionlist;
             else
                 mySongs=AllSongs;
 
@@ -333,7 +362,7 @@ public class MusicActivity extends AppCompatActivity  {
 
             if(!emotion.equals("AllSongs")) {
                 startActivityForResult(new Intent(getApplicationContext(), PlayerActivity.class)
-                        .putExtra("songs", mySongs)
+                        .putExtra("songs", emotionlist)
                         .putExtra("songname", songName)
                         .putExtra("favSongs",music.get("FavouriteSongs"))
                         .putExtra("pos", 0), 1);
@@ -346,10 +375,12 @@ public class MusicActivity extends AppCompatActivity  {
                     songName = (String) listView.getItemAtPosition(position);
                     String sname = mySongs.get(position).getName();
                     startActivityForResult(new Intent(getApplicationContext(),PlayerActivity.class)
-                            .putExtra("songs", mySongs)
+                            .putExtra("songs", allsongslist)
                             .putExtra("songname",songName)
                             .putExtra("favSongs",music.get("FavouriteSongs"))
                             .putExtra("pos", position),1);
+
+                    //Changes done here
                 }
             });
         }
@@ -522,32 +553,6 @@ public class MusicActivity extends AppCompatActivity  {
 
     @Override
     protected void onResume() {
-//        try {
-//            if (PlayerActivity.mediaPlayer!=null)
-//            {
-//                if (PlayerActivity.mediaPlayer.isPlaying())
-//                {
-//                    hbtnpause.setBackgroundResource(R.drawable.ic_pause_circle);
-//                }
-//                else {
-//                    hbtnpause.setBackgroundResource(R.drawable.ic_play_circle);
-//                }
-//                Intent i = getIntent();
-//                songName = i.getStringExtra("songname");
-//                txtnp.setText(songName);
-//                txtnp.setSelected(true);
-//            }
-//            else
-//            {
-//                hbtnpause.setBackgroundResource(R.drawable.ic_play_circle);
-//                rv.setVisibility(View.VISIBLE);
-//            }
-//        }
-//        catch(IllegalStateException ex)
-//        {
-//            ex.printStackTrace();
-//        }
-
         super.onResume();
     }
 
