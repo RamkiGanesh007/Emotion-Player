@@ -52,9 +52,7 @@ public class PlayerActivity extends AppCompatActivity{
 
     int position;
     ArrayList<Song> mySongs;
-//    ArrayList<Song> emotionlist;
-//    ArrayList<Song> allsongslist;
-    ArrayList<File> favSongs;
+    ArrayList<Song> favSongs;
 
     private final Handler mainHandler=new Handler();
 
@@ -63,55 +61,6 @@ public class PlayerActivity extends AppCompatActivity{
     Runnable runnable;
 
     class Threadp extends Thread{
-
-        public ArrayList<File> findSongs(File file)
-        {
-            ArrayList<File> arrayList=new ArrayList<>();
-            File[] files =file.listFiles();
-            if(files!=null)
-                for(File fle:files) {
-                    if (!fle.isDirectory()) {
-                        if (fle.getName().endsWith(".mp3") || fle.getName().endsWith(".wav"))
-                        {
-                            arrayList.add(fle);
-                        }
-                    }
-                }
-            return arrayList;
-        }
-
-        private ArrayList<File> makeFavourite(File inp)
-        {
-            File filedir=new File(getExternalFilesDir(null)+"/"+ "FavouriteSongs");
-            InputStream in=null;
-            OutputStream out=null;
-            File fout=new File(filedir,inp.getName());
-            if(!fout.exists())
-            {
-                try {
-                    in=new FileInputStream(inp);
-                    out=new FileOutputStream(fout);
-                    copyFile(in, out);
-                    Toast.makeText(PlayerActivity.this, "Song Favourite!!", Toast.LENGTH_SHORT).show();
-                }
-                catch(IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-            return findSongs(filedir);
-        }
-
-        private void copyFile(InputStream in, OutputStream out) throws IOException
-        {
-            byte[] buffer =new byte[1024];
-            int read;
-            while((read=in.read(buffer))!=-1)
-            {
-                out.write(buffer,0,read);
-            }
-        }
-
 
         public void startAnimation(View view)
         {
@@ -159,7 +108,7 @@ public class PlayerActivity extends AppCompatActivity{
                 Bundle bundle = i.getExtras();
 
                 Log.i("Plact Returns: ", "" + i.getExtras());
-//                mySongs = (ArrayList) bundle.getParcelableArrayList("songs");
+
                 mySongs=(ArrayList) bundle.getParcelableArrayList("songs");
                 favSongs = (ArrayList) bundle.getParcelableArrayList("favSongs");
 
@@ -167,18 +116,18 @@ public class PlayerActivity extends AppCompatActivity{
                 String songName = i.getStringExtra("songname");
                 position = bundle.getInt("pos", 0);
                 txtsname.setSelected(true);
-//                Uri uri = Uri.parse(mySongs.get(position).toString());
+
                 String songUrl=mySongs.get(position).getSongUrl();
                 sname = mySongs.get(position).getSongName();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-//                        if (favSongs != null)
-//                            if (favSongs.contains(mySongs.get(position))) {
-//                                btnfav.setBackgroundResource(R.drawable.ic_favorite);
-//                            } else {
-//                                btnfav.setBackgroundResource(R.drawable.ic_favorite_blank);
-//                            }
+                        if (favSongs != null)
+                            if (favSongs.contains(mySongs.get(position))) {
+                                btnfav.setBackgroundResource(R.drawable.ic_favorite);
+                            } else {
+                                btnfav.setBackgroundResource(R.drawable.ic_favorite_blank);
+                            }
                     }
                 });
                 try {
@@ -186,20 +135,18 @@ public class PlayerActivity extends AppCompatActivity{
                     {
                         mediaPlayer.stop();
                     }
+                    mediaPlayer =new MediaPlayer();
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-//                    mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
                     try {
                         mediaPlayer.setDataSource(songUrl);
-                        // below line is use to prepare
-                        // and start our media player.
                         mediaPlayer.prepare();
                         mediaPlayer.start();
 
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-//                    mediaPlayer.start();
+
                     String endTime=createTime(mediaPlayer.getDuration());
                 }
                 catch(IllegalStateException ex)
@@ -313,14 +260,14 @@ public class PlayerActivity extends AppCompatActivity{
                     @Override
                     public void onClick(View v) {
                             position = ((position + 1) % mySongs.size());
-//                            Uri uri = Uri.parse(mySongs.get(position).toString());
                         String songUrl=mySongs.get(position).getSongUrl();
                             if(mediaPlayer.isPlaying())
                             {
                                 mediaPlayer.stop();
+                                mediaPlayer.reset();
                             }
-//                            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
                         try {
+                            mediaPlayer.reset();
                             mediaPlayer.setDataSource(songUrl);
                             mediaPlayer.prepare();
                             mediaPlayer.start();
@@ -329,7 +276,6 @@ public class PlayerActivity extends AppCompatActivity{
                         }
                             sname = mySongs.get(position).getSongName();
                             txtsname.setText(sname);
-//                            mediaPlayer.start();
                             btnplay.setBackgroundResource(R.drawable.ic_pause);
                             startAnimation(imageView);
                             seekmusic.setMax(mediaPlayer.getDuration());
@@ -349,13 +295,14 @@ public class PlayerActivity extends AppCompatActivity{
                         if(mediaPlayer.isPlaying())
                         {
                             mediaPlayer.stop();
+                            mediaPlayer.reset();
                         }
-//                        Uri uri=Uri.parse(mySongs.get(position).toString());
                         String songUrl=mySongs.get(position).getSongUrl();
 
-//                        mediaPlayer=MediaPlayer.create(getApplicationContext(),uri);
                         try{
+                            mediaPlayer.reset();
                             mediaPlayer.setDataSource(songUrl);
+                            mediaPlayer.prepare();
                             mediaPlayer.start();
                         }
                         catch (IOException e)
@@ -365,7 +312,6 @@ public class PlayerActivity extends AppCompatActivity{
                         sname=mySongs.get(position).getSongName();
 
                         txtsname.setText(sname);
-//                        mediaPlayer.start();
                         btnplay.setBackgroundResource(R.drawable.ic_pause);
                         startAnimation(imageView);
                         seekmusic.setMax(mediaPlayer.getDuration());
@@ -385,9 +331,6 @@ public class PlayerActivity extends AppCompatActivity{
                     @Override
                     public void onClick(View v) {
                         if (btnfav.getBackground().getConstantState().equals(getDrawable(R.drawable.ic_favorite_blank).getConstantState())) {
-
-//                            File file=mySongs.get(position);
-//                            makeFavourite(file);
 
                             btnfav.setBackgroundResource(R.drawable.ic_favorite);
                         } else

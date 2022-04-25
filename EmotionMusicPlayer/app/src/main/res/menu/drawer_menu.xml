@@ -45,6 +45,14 @@
             android:title="My Favourites">
         </item>
 
+        <item
+            android:id="@+id/upload"
+            android:icon="@drawable/ic_baseline_cloud_upload_24"
+            android:title="Upload Songs"
+            >
+
+        </item>
+
     </group>
 
     <item android:title="Settings">

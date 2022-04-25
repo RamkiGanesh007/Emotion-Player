@@ -1,33 +1,34 @@
 {
   "project_info": {
-    "project_number": "980165138100",
-    "project_id": "ml-project-7a192",
-    "storage_bucket": "ml-project-7a192.appspot.com"
+    "project_number": "484764926618",
+    "firebase_url": "https://music-c6d5e-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "music-c6d5e",
+    "storage_bucket": "music-c6d5e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:980165138100:android:0920eb800b80c8e2cc29e1",
+        "mobilesdk_app_id": "1:484764926618:android:a56d3318410b1535715523",
         "android_client_info": {
           "package_name": "com.emotion.musicplayer"
         }
       },
       "oauth_client": [
         {
-          "client_id": "980165138100-1mr5jvf5ta40fob6u2gf5atqm9jduo67.apps.googleusercontent.com",
+          "client_id": "484764926618-752ajg6pu51sppu5ip3cajociomqmnis.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBK5hwnUMbZw_JaoIoTlAi7XvtbIQHBDwA"
+          "current_key": "AIzaSyBCNrpgEYJOupdQvUG17DiaHudWX7LnPfA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "980165138100-1mr5jvf5ta40fob6u2gf5atqm9jduo67.apps.googleusercontent.com",
+              "client_id": "484764926618-752ajg6pu51sppu5ip3cajociomqmnis.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
@@ -36,27 +37,27 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:980165138100:android:76451b951e73b069cc29e1",
+        "mobilesdk_app_id": "1:484764926618:android:29ca5f7e29c04e7a715523",
         "android_client_info": {
-          "package_name": "com.lampa.emotionrecognition"
+          "package_name": "com.music.music"
         }
       },
       "oauth_client": [
         {
-          "client_id": "980165138100-1mr5jvf5ta40fob6u2gf5atqm9jduo67.apps.googleusercontent.com",
+          "client_id": "484764926618-752ajg6pu51sppu5ip3cajociomqmnis.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBK5hwnUMbZw_JaoIoTlAi7XvtbIQHBDwA"
+          "current_key": "AIzaSyBCNrpgEYJOupdQvUG17DiaHudWX7LnPfA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "980165138100-1mr5jvf5ta40fob6u2gf5atqm9jduo67.apps.googleusercontent.com",
+              "client_id": "484764926618-752ajg6pu51sppu5ip3cajociomqmnis.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

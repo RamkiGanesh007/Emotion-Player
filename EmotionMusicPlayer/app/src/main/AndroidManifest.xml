@@ -52,7 +52,11 @@
         <activity
             android:name=".ManageMediaActivity"
             android:screenOrientation="portrait"/>
-
+        <activity
+            android:name=".UploadSongsActivity"
+            android:label="UploadSongActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!--
                Set to true if your app is Standalone, that is, it does not require the handheld

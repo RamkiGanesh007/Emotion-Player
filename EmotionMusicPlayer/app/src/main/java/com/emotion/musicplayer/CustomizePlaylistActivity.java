@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
 
+import com.emotion.musicplayer.model.Song;
 import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
 
 import java.io.File;
@@ -47,7 +48,7 @@ public class CustomizePlaylistActivity extends AppCompatActivity implements Emoj
     ListView listView;
     String[] items;
     String sltd;
-    static ArrayList<File> music;
+    static ArrayList<Song> music;
     View e_view;
     int e_position;
 
@@ -63,55 +64,26 @@ public class CustomizePlaylistActivity extends AppCompatActivity implements Emoj
     public String onEmojiSelected(int emoji_id) {
         sltd="";
         ImageView img;
-        File fle=music.get(e_position);
-        File rfle;
-        String path=fle.getAbsolutePath();
-        boolean flg;
-        String name=fle.getName();
+        Song fle=music.get(e_position);
         img = e_view.findViewById(R.id.emotion);
         switch(emoji_id)
         {
             case 0:
                 sltd="Angry  ";
-                rfle=new File(path.substring(0,69)+sltd+fle.getName().substring(7));
-                flg=fle.renameTo(rfle);
-                if(!flg)
-                    Toast.makeText(this, "Please Try Again", Toast.LENGTH_SHORT).show();
-                else {
-                    img.setBackgroundResource(R.drawable.angry_emoji);
-                }
+
                 break;
             case 1:
                 sltd="Sad    ";
-                rfle=new File(path.substring(0,69)+sltd+fle.getName().substring(7));
-                flg=fle.renameTo(rfle);
-                if(!flg)
-                    Toast.makeText(this, "Please Try Again", Toast.LENGTH_SHORT).show();
-                else {
-                    img.setBackgroundResource(R.drawable.sad_emoji);
-                }
+
 
                 break;
             case 2:
                 sltd="Happy  ";
-                rfle=new File(path.substring(0,69)+sltd+fle.getName().substring(7));
-                flg=fle.renameTo(rfle);
-                if(!flg)
-                    Toast.makeText(this, "Please Try Again", Toast.LENGTH_SHORT).show();
-                else {
-                    img.setBackgroundResource(R.drawable.happy_emoji);
-                }
 
                 break;
             case 3:
                 sltd="Neutral";
-                rfle=new File(path.substring(0,69)+sltd+fle.getName().substring(7));
-                flg=fle.renameTo(rfle);
-                if(!flg)
-                    Toast.makeText(this, "Please Try Again", Toast.LENGTH_SHORT).show();
-                else {
-                    img.setBackgroundResource(R.drawable.neutral_emoji);
-                }
+
                 break;
         }
         e_position=Integer.MIN_VALUE;
@@ -150,15 +122,15 @@ public class CustomizePlaylistActivity extends AppCompatActivity implements Emoj
         Intent intent=getIntent();
         Bundle bundle=intent.getExtras();
         music =(ArrayList) bundle.getParcelableArrayList("Songs");
-        for(File file:music)
+        for(Song file:music)
         {
-            Log.i(TAG,file.getName());
+            Log.i(TAG,file.getSongName());
         }
         listView = findViewById(R.id.c_items);
 
         items = new String[music.size()];
             for (int i = 0; i < music.size(); i++) {
-                items[i] = music.get(i).getName().replace(".mp3", "").replace(".wav", "");
+                items[i] = music.get(i).getSongName();
             }
             customAdapter customAdapter = new customAdapter();
             listView.setAdapter(customAdapter);

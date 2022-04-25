@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
 
+import com.emotion.musicplayer.model.Song;
 import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
 
 import java.io.File;
@@ -48,7 +49,7 @@ public class ManageMediaActivity extends AppCompatActivity{
 
     ListView listView;
     String[] items;
-    static ArrayList<File> music;
+    static ArrayList<Song> music;
     int m_position;
 
     @Override
@@ -72,7 +73,7 @@ public class ManageMediaActivity extends AppCompatActivity{
     {
         items = new String[music.size()];
         for (int i = 0; i < music.size(); i++) {
-            items[i] = music.get(i).getName().replace(".mp3", "").replace(".wav", "");
+            items[i] = music.get(i).getSongName();
         }
         customAdapter customAdapter = new customAdapter();
         listView.setAdapter(customAdapter);
@@ -93,16 +94,16 @@ public class ManageMediaActivity extends AppCompatActivity{
         Intent intent=getIntent();
         Bundle bundle=intent.getExtras();
         music =(ArrayList) bundle.getParcelableArrayList("Songs");
-        for(File file:music)
+        for(Song file:music)
         {
-            Log.i(TAG,file.getName());
+            Log.i(TAG,file.getSongName());
         }
         listView = findViewById(R.id.delete_items);
         updateSongs();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                File file=music.get(position);
+                Song file=music.get(position);
                 m_position=position;
                 AlertDialog diaBox = AskOption();
                 diaBox.show();
@@ -121,16 +122,16 @@ public class ManageMediaActivity extends AppCompatActivity{
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        File fle=music.get(m_position);
-                        if(fle.delete())
+                        Song fle=music.get(m_position);
+                        if(true)//implement deleting a song
                         {
-                            music.remove(m_position);
-                            updateSongs();
-                            m_position=Integer.MIN_VALUE;
+//                            music.remove(m_position);
+//                            updateSongs();
+//                            m_position=Integer.MIN_VALUE;
                         }
                         else
                         {
-                            m_position=Integer.MIN_VALUE;
+//                            m_position=Integer.MIN_VALUE;
                         }
                         dialog.dismiss();
                     }

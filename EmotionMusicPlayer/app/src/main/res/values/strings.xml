@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">EmotionMusicPlayer</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -8,4 +9,12 @@
     <string name="take_photo_button">Take a photo</string>
     <string name="face">Face</string>
     <string name="faceless">No face detected</string>
+    <string name="happy">Happy</string>
+    <string name="sad">Sad</string>
+    <string name="neutral">Neutral</string>
+    <string name="angry">Angry</string>
+    <string name="select_songs_to_upload">Select Songs to Upload:</string>
+    <string name="upload">Upload Songs</string>
+    <string name="select_emotion_of_the_song_s">Select Emotion of the Song(s):</string>
+
 </resources>

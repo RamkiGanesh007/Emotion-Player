@@ -33,8 +33,14 @@ public class SongUtil {
     //1.Storing into database
     //2.fetching list based on emotion
     //3.upload song
-    private FirebaseFirestore dbfire = FirebaseFirestore.getInstance();
-    private StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+
+    public SongUtil()
+    {
+        dbfire = FirebaseFirestore.getInstance();
+        storageReference = FirebaseStorage.getInstance().getReference();
+    }
+    private FirebaseFirestore dbfire ;
+    private StorageReference storageReference;
 
 
     public Task<UploadTask.TaskSnapshot> storeSong(String songName, Uri uri, String emotion) {

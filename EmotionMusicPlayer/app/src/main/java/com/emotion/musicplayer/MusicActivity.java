@@ -31,6 +31,7 @@ import com.emotion.musicplayer.model.Song;
 import com.emotion.musicplayer.utils.SongUtil;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -46,6 +47,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,22 +60,25 @@ public class MusicActivity extends AppCompatActivity  {
     Button hbtnpause;
     TextView txtnp;
     static int position;
-    static ArrayList<File> mySongs;
+    static ArrayList<Song> mySongs;
     ArrayList<Song> allsongslist;
     ArrayList<Song> emotionlist;
-    static ArrayList<File> AllSongs;
-    static Map<String,ArrayList<File>> music;
-    static ArrayList<File> favSongs;
+    static ArrayList<Song> AllSongs;
+    static Map<String,ArrayList<Song>> music;
+    static ArrayList<Song> favSongs;
     static String songName;
     String emotion;
     LoadingAcitvity loadingAcitvity;
+
+
 
     class Threadt extends Thread implements NavigationView.OnNavigationItemSelectedListener{
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+            Intent intent=null;
             ArrayList<String> emotions=new ArrayList<>(Arrays.asList("Happy","Sad","Neutral","Angry"));
-            getAssets_songs(getExternalFilesDir("Songs"));
                     String a="klslkmdmksdlk";
                     boolean flg=true;
             listView.setAdapter(null);
@@ -101,22 +106,21 @@ public class MusicActivity extends AppCompatActivity  {
                     break;
                 case R.id.all:
                     setTitle("All Songs");
-                    mySongs=AllSongs;
+                    mySongs=allsongslist;
                     break;
                 case R.id.fav:
 
                     setTitle("My Favourites");
-                    getAssets(getExternalFilesDir("FavouriteSongs"),"FavouriteSongs");
                     mySongs=music.get("FavouriteSongs");
                     if(mySongs!=null) {
                         items = new String[mySongs.size()];
                         for (int i = 0; i < mySongs.size(); i++) {
                             for (String b : emotions) {
-                                if (mySongs.get(i).getName().contains(b)) {
-                                    items[i] = mySongs.get(i).getName().substring(7).replace(".mp3", "").replace(".wav", "");
+                                if (mySongs.get(i).getSongName().contains(b)) {
+                                    items[i] = mySongs.get(i).getSongName().substring(7).replace(".mp3", "").replace(".wav", "");
                                     break;
                                 } else
-                                    items[i] = mySongs.get(i).getName().replace(".mp3", "").replace(".wav", "");
+                                    items[i] = mySongs.get(i).getSongName().replace(".mp3", "").replace(".wav", "");
                             }
                         }
                         customAdapter customAdapter = new customAdapter();
@@ -125,29 +129,35 @@ public class MusicActivity extends AppCompatActivity  {
                     }
 
                     break;
+                case R.id.upload:
+                    intent = new Intent(MusicActivity.this,UploadSongsActivity.class);
+                    startActivity(intent);
+                    break;
+
                 case R.id.portfolio:
-                    Intent intent = new Intent(MusicActivity.this,AboutActivity.class);
+                    intent = new Intent(MusicActivity.this,AboutActivity.class);
                     startActivity(intent);
                     break;
                 case R.id.c_playlist:
-                    Intent c_intent = new Intent(MusicActivity.this,CustomizePlaylistActivity.class);
-                    c_intent.putExtra("Songs",findAllSongs(getExternalFilesDir("Songs")));
-                    startActivity(c_intent);
+                    intent = new Intent(MusicActivity.this,CustomizePlaylistActivity.class);
+
+                    intent.putExtra("Songs",allsongslist);
+                    startActivity(intent);
                     break;
                 case R.id.manage_media:
-                    Intent d_intent = new Intent(MusicActivity.this,ManageMediaActivity.class);
-                    d_intent.putExtra("Songs",findAllSongs(getExternalFilesDir("Songs")));
-                    startActivity(d_intent);
-                    break;
+                    intent = new Intent(MusicActivity.this,ManageMediaActivity.class);
 
+                    intent.putExtra("Songs",allsongslist);
+                    startActivity(intent);
+                    break;
             }
             if(mySongs!=null && flg) {
                 items = new String[mySongs.size()];
                 for (int i = 0; i < mySongs.size(); i++) {
-                    if(mySongs.get(i).getName().contains(a))
-                        items[i] = mySongs.get(i).getName().substring(7).replace(".mp3", "").replace(".wav", "");
+                    if(mySongs.get(i).getSongName().contains(a))
+                        items[i] = mySongs.get(i).getSongName();
                     else
-                        items[i] = mySongs.get(i).getName().replace(".mp3", "").replace(".wav", "");
+                        items[i] = mySongs.get(i).getSongName();
                 }
                 customAdapter customAdapter = new customAdapter();
                 listView.setAdapter(customAdapter);
@@ -156,143 +166,26 @@ public class MusicActivity extends AppCompatActivity  {
             return true;
         }
 
-        private void Favourites()
-        {
-            File file=new File(getExternalFilesDir(null)+"/"+ "FavouriteSongs");
-            if(!file.exists())
-            {
-                file.mkdir();
-            }
-            else
-            {
-                favSongs=findSongs(file);
-            }
-        }
-
-        private void copyAssets1(String fname)
-        {
-            String dirpath=getExternalFilesDir(null)+"/";
-            File fout=new File(dirpath,fname);
-            if(!fout.exists())
-            {
-                fout.mkdir();
-                dirpath+=fname;
-
-                InputStream in=null;
-                OutputStream out=null;
-                try{
-                    AssetManager assetManager=getResources().getAssets();
-                    String[] arr= getResources().getAssets().list("");
-
-                    for(String file:arr)
-                    {
-                        if(!file.contains(".tflite"))
-                            fout = new File(dirpath, file);
-                        in = assetManager.open(file);
-                        out = new FileOutputStream(fout);
-                        copyFile(in, out);
-                    }
-                }
-                catch(IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-
-        private void copyFile(InputStream in, OutputStream out) throws IOException
-        {
-            byte[] buffer =new byte[1024];
-            int read;
-            while((read=in.read(buffer))!=-1)
-            {
-                out.write(buffer,0,read);
-            }
-        }
-
-
-        public ArrayList<File> findSongs(File file)
-            {
-                ArrayList<File> arrayList=new ArrayList<>();
-                File[] files =file.listFiles();
-                if(files!=null)
-                    for(File fle:files) {
-                        if (!fle.isDirectory()) {
-                            if (fle.getName().endsWith(".mp3") || fle.getName().endsWith(".wav"))
-                            {
-                                arrayList.add(fle);
-                            }
-                        }
-                    }
-                return arrayList;
-            }
-
-        public ArrayList<File> findAllSongs (File file)
-        {
-            Log.d(currentThread().getName()+" Location: ",""+file.getAbsolutePath());
-
-            ArrayList<File> arrayList = new ArrayList<>();
-            File[] files = file.listFiles();
-            if(files!=null)
-                for (File singlefile: files)
-                {
-                    if (singlefile.isDirectory() && !singlefile.isHidden())
-                    {
-                        arrayList.addAll(findAllSongs(singlefile));
-                    }
-                    else
-                    {
-                        if (singlefile.getName().endsWith(".mp3") || singlefile.getName().endsWith(".wav"))
-                        {
-                            arrayList.add(singlefile);
-                        }
-                    }
-                }
-            return arrayList;
-        }
-
-        public void getAssets (File file,String name)
-        {
-            Log.d(currentThread().getName()+"Get Assets : ",""+file.getAbsolutePath());
-            ArrayList<File> aList = new ArrayList<>();
-
-                        aList=findSongs(file);
-                        if(aList.size()>0) {
-                                music.put(name,aList);
-                        }
-                    }
-
-        public void getAssets_songs(File file)
-        {
-            Log.d(currentThread().getName()+"Get Assets : ",""+file.getAbsolutePath());
-            String emotion;
-            music.clear();
-            ArrayList<File> cpList = new ArrayList<>();
-            File[] files = file.listFiles();
-            if(files!=null)
-                for (File singlefile: files)
-                {
-                                emotion=singlefile.getName().substring(0,7).trim();
-                                cpList.clear();
-                                if(music.get(emotion)!=null)
-                                cpList=music.get(emotion);
-                                cpList.add(singlefile);
-                                music.put(emotion,new ArrayList<>(cpList));
-                                Log.d("","");
-                }
-        }
         @Override
         public void run() {
             music=new HashMap<>();
+
+            for(String i:getResources().getStringArray(R.array.emotions))
+            {
+                music.put(i,new ArrayList<>());
+            }
+            music.put("AllSongs",new ArrayList<>());
+
+            music.put("FavouriteSongs",new ArrayList<>());
+
+            Toolbar toolbar = findViewById(R.id.toolbar);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     loadingAcitvity.startLoading();
+
                 }
             });
-
-            Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             drawerLayout = findViewById(R.id.drawer_layout);
 
@@ -302,78 +195,73 @@ public class MusicActivity extends AppCompatActivity  {
             drawerLayout.addDrawerListener(toggle);
             toggle.syncState();
 
-            AllSongs = findAllSongs(Environment.getExternalStorageDirectory());
+
 
             Task<QuerySnapshot> Allsongstask= songUtil.fetchAllSongs();
-            Allsongstask.addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    allsongslist = (ArrayList<Song>)task.getResult().toObjects(Song.class);
-                } else {
-                    Log.w(TAG, "Error getting documents.", task.getException());
-                }
-            });
+            Allsongstask.addOnCompleteListener(
+                    task -> {
+                        allsongslist =(ArrayList) task.getResult().toObjects(Song.class);
+                        for(Song i:allsongslist)
+                        {
+                            Log.d(TAG, "Song =>  "+i.toString());
+                        }
+                        loadingAcitvity.stopLoading();
 
 
-            Favourites();
-            copyAssets1("/Songs");
+                        updateEmotionlist(allsongslist);
+                        for(String i:music.keySet())
+                            Log.d("Songs: "+i,""+music.get(i)+"\n");
+
+                        emotionlist=music.get(emotion);
+
+                        if(!emotion.equals("AllSongs"))
+                            mySongs=emotionlist;
+                        else
+                            mySongs=allsongslist;
 
 
-            getAssets_songs(getExternalFilesDir("Songs"));
-            getAssets(getExternalFilesDir("FavouriteSongs"),"FavouriteSongs");
+                        Collections.sort(mySongs, new Comparator<Song>() {
+                            @Override
+                            public int compare(Song s1, Song s2) {
+                                return s1.getSongName().compareTo(s2.getSongName());
+                            }
+                        });
 
-            for(String i:music.keySet())
-                Log.d("Songs: "+i,""+music.get(i)+"\n");
-            Task<QuerySnapshot> emotionlisttask=songUtil.fetchSongsByEmotion(emotion);
+                        items = new String[mySongs.size()];
+                        for (int i=0;i<mySongs.size();i++)
+                        {
+                            items[i] = mySongs.get(i).getSongName();
+                        }
 
-            emotionlisttask.addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    emotionlist =(ArrayList<Song>) task.getResult().toObjects(Song.class);
-                } else {
-                    Log.w(TAG, "Error getting documents.", task.getException());
-                }
-            });
+                        customAdapter customAdapter = new customAdapter();
 
-            if(!emotion.equals("AllSongs"))
-            mySongs=music.get(emotion);
-//            mySongs=emotionlist;
-            else
-                mySongs=AllSongs;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                listView.setAdapter(customAdapter);
+                                txtnp.setSelected(true);
+                                txtnp.setVisibility(View.VISIBLE);
+                            }
+                        });
 
-            Collections.sort(mySongs);
 
-            items = new String[mySongs.size()];
-            for (int i=0;i<mySongs.size();i++)
-            {
-                items[i] = mySongs.get(i).getName().replace(".mp3","").replace(".wav","");
-            }
 
-            customAdapter customAdapter = new customAdapter();
+                        if(!emotion.equals("AllSongs")) {
+                            startActivityForResult(new Intent(getApplicationContext(), PlayerActivity.class)
+                                    .putExtra("songs", emotionlist)
+                                    .putExtra("songname", songName)
+                                    .putExtra("favSongs",music.get("FavouriteSongs"))
+                                    .putExtra("pos", 0), 1);
+                        }
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    listView.setAdapter(customAdapter);
-                    txtnp.setSelected(true);
-                    txtnp.setVisibility(View.VISIBLE);
-                }
-            });
+                    });
 
-            loadingAcitvity.stopLoading();
-
-            if(!emotion.equals("AllSongs")) {
-                startActivityForResult(new Intent(getApplicationContext(), PlayerActivity.class)
-                        .putExtra("songs", emotionlist)
-                        .putExtra("songname", songName)
-                        .putExtra("favSongs",music.get("FavouriteSongs"))
-                        .putExtra("pos", 0), 1);
-            }
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                    songName = (String) listView.getItemAtPosition(position);
-                    String sname = mySongs.get(position).getName();
+                    songName = mySongs.get(position).getSongName();
                     startActivityForResult(new Intent(getApplicationContext(),PlayerActivity.class)
                             .putExtra("songs", allsongslist)
                             .putExtra("songname",songName)
@@ -383,6 +271,16 @@ public class MusicActivity extends AppCompatActivity  {
                     //Changes done here
                 }
             });
+        }
+
+        private void updateEmotionlist(ArrayList<Song> allsongslist) {
+            ArrayList<Song>  dummy;
+            for(Song i:allsongslist)
+            {
+                dummy=music.get(i.getEmotion());
+                dummy.add(i);
+                music.put(i.getEmotion(),dummy);
+            }
         }
     }
 
@@ -417,7 +315,7 @@ public class MusicActivity extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        songUtil=new SongUtil();
         Intent i=getIntent();
         Bundle bundle=i.getExtras();
 

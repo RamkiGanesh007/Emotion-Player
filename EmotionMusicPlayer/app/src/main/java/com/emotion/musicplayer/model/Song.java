@@ -1,7 +1,13 @@
 package com.emotion.musicplayer.model;
 
-public class Song {
+import java.io.Serializable;
+import java.util.Comparator;
+
+public class Song implements Serializable {
     private String songName,songUrl,emotion;
+
+
+
 
     public Song() {
     }
