@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,47 +32,37 @@ public class UploadSongsActivity extends AppCompatActivity {
     private String selectedEmotion;
     private String songName;
     private SongUtil songUtil;
-//    private s
-
+    private RadioGroup emotionpick;
+    private Button button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_songs);
         songUtil=new SongUtil();
+        button=findViewById(R.id.upload);
 
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSelectSongsButtonClick(view);
+            }
+        });
 
+        emotionpick=(RadioGroup)findViewById(R.id.radioGroup);
 
-    }
-
-    public void onRadioButtonClicked(View view) {
-        boolean checked = ((RadioButton) view).isChecked();
-
-        switch(view.getId()) {
-            case R.id.radio_happy:
-                if (checked)
-                    selectedEmotion = "happy";
-                break;
-            case R.id.radio_sad:
-                if (checked)
-                    selectedEmotion = "sad";
-                break;
-            case R.id.radio_neutral:
-                if (checked)
-                    selectedEmotion = "neutral";
-                break;
-            case R.id.radio_angry:
-                if (checked)
-                    selectedEmotion = "angry";
-                break;
-        }
     }
 
     public void onSelectSongsButtonClick(View view) {
-        Intent chooseFile;
-        chooseFile = new Intent();
-        chooseFile.setType("audio/*");
-        chooseFile.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        startActivityForResult(chooseFile, PICK_SONGS_INTENT);
+
+        RadioButton r=(RadioButton)findViewById(emotionpick.getCheckedRadioButtonId());
+        selectedEmotion=String.valueOf(r.getText());
+
+        Intent intent = new Intent();
+        intent.setType("audio/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,"Select Songs"), 1);
+
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -103,10 +95,12 @@ public class UploadSongsActivity extends AppCompatActivity {
                     selectedSongs.put(songName,uri);
                 }
             }
+            onSubmit();
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void onSubmit(View view) {
+    public void onSubmit() {
         if(selectedEmotion == null) {
             Toast.makeText(this,"Select an emotion!", Toast.LENGTH_SHORT);
             return;
@@ -121,5 +115,8 @@ public class UploadSongsActivity extends AppCompatActivity {
         {
             songUtil.storeSong(song.getKey(),song.getValue(),selectedEmotion);
         }
+
+        Toast.makeText(this, "Songs Uploaded Successfully!!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }
