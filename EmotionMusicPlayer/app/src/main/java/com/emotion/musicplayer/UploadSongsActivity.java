@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.provider.Settings;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -113,10 +114,14 @@ public class UploadSongsActivity extends AppCompatActivity {
         // upload each file looping through selectedSongs
         for(Map.Entry<String,Uri> song : selectedSongs.entrySet())
         {
-            songUtil.storeSong(song.getKey(),song.getValue(),selectedEmotion);
+            String id= Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
+            songUtil.storeSong(id,song.getKey(),song.getValue(),selectedEmotion);
         }
 
         Toast.makeText(this, "Songs Uploaded Successfully!!", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent();
+        setResult(10, intent);
         finish();
+
     }
 }

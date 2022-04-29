@@ -6,9 +6,6 @@ import java.util.Comparator;
 public class Song implements Serializable {
     private String songName,songUrl,emotion;
 
-
-
-
     public Song() {
     }
 
