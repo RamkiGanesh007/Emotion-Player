@@ -10,13 +10,20 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.emotion.musicplayer.model.Song;
+import com.emotion.musicplayer.model.User;
 import com.emotion.musicplayer.utils.UserUtil;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -56,12 +63,22 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Permissions Granted!!", Toast.LENGTH_SHORT).show();
                             String id=Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
                             UserUtil userUtil=new UserUtil();
-                            if(userUtil.checkUser(id))
-                            Log.d("TAG", "onPermissionsChecked: "+"User is Existing");
-                            else
-                                Log.d("TAG", "onPermissionsChecked: "+"User Not Exists!!!");
-                            Log.d("UserID : ", "===> "+id);
-                            userUtil.storeUser(id);
+                            Task<QuerySnapshot> task1 = userUtil.getUser(id).get();
+                            task1.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    ArrayList<User> u;
+                                    u=(ArrayList<User>) task.getResult().toObjects(User.class);
+                                    User k=u.get(0);
+                                    if(!k.getUserId().equals(id)) {
+                                        userUtil.storeUser(id);
+                                        Log.d("TAG", "onPermissionsChecked: " + "User Not Exists!!");
+                                        return ;
+                                    }
+                                    Log.d("TAG", "onPermissionsChecked: " + "User is Existing");
+                                    return ;
+                                }
+                        });
                         }
                     }
                     @Override

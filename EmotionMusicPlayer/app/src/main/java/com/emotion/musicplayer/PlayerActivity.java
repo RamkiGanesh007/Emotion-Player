@@ -26,7 +26,10 @@ import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
 
 import com.emotion.musicplayer.model.Song;
+import com.emotion.musicplayer.utils.UserUtil;
 import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -114,6 +117,7 @@ public class PlayerActivity extends AppCompatActivity{
 
 
                 String songName = i.getStringExtra("songname");
+                String id = i.getStringExtra("id");
                 position = bundle.getInt("pos", 0);
                 txtsname.setSelected(true);
 
@@ -122,12 +126,13 @@ public class PlayerActivity extends AppCompatActivity{
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (favSongs != null)
+                        if (favSongs != null) {
                             if (favSongs.contains(mySongs.get(position))) {
                                 btnfav.setBackgroundResource(R.drawable.ic_favorite);
                             } else {
                                 btnfav.setBackgroundResource(R.drawable.ic_favorite_blank);
                             }
+                        }
                     }
                 });
                 try {
@@ -331,13 +336,19 @@ public class PlayerActivity extends AppCompatActivity{
                     @Override
                     public void onClick(View v) {
                         if (btnfav.getBackground().getConstantState().equals(getDrawable(R.drawable.ic_favorite_blank).getConstantState())) {
-
                             btnfav.setBackgroundResource(R.drawable.ic_favorite);
+                            favSongs.add(mySongs.get(position));
                         } else
                         {
-
                             btnfav.setBackgroundResource(R.drawable.ic_favorite_blank);
+                            favSongs.remove(mySongs.get(position));
                         }
+                        new UserUtil().getDocRef(i.getStringExtra("id")).update("favouriteSongs",favSongs).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+                            }
+                        });
                     }
                 });
 
@@ -348,6 +359,7 @@ public class PlayerActivity extends AppCompatActivity{
                         sname = mySongs.get(position).getSongName();
                         resultIntent.putExtra(EXTRA_NAME, sname);
                         resultIntent.putExtra("pos",position);
+                        resultIntent.putExtra("favsongs",favSongs);
                         setResult(RESULT_OK,resultIntent);
                         finish();
                     }

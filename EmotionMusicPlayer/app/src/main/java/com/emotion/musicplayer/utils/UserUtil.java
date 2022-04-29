@@ -53,23 +53,28 @@ public class UserUtil {
         });
     }
 
-    public Query fetchAllSongs(String UserId) {
+
+
+    public Query getUser(String UserId)
+    {
         return dbfire.collection("Users").whereEqualTo("userId",UserId);
     }
-
-
-    public boolean checkUser(String UserId)
-    {
-        return dbfire.collection("Users").whereEqualTo("UserId",UserId).equals(UserId);
+    public DocumentReference getDocRef(String UserId) {
+        return  dbfire.collection("Users").document(UserId);
     }
-
-    public void updateUserList(String UserId, ArrayList<Song> fav, ArrayList<Song> mysongs)
-    {
-        // Update an existing document
-        DocumentReference docRef = dbfire.collection("Users").document(UserId);
-        docRef.update("FavouriteSongs",fav);
-        docRef.update("MySongs",mysongs);
-    }
+//    public void updateUserList(String UserId, ArrayList<Song> fav, ArrayList<Song> mysongs)
+//    {
+//        // Update an existing document
+//        DocumentReference docRef = dbfire.collection("Users").document(UserId);
+//        docRef.update("favouriteSongs",fav);
+//        docRef.update("mySongs",mysongs);
+//    }
+//
+//    public void updateFavourites(String UserId,ArrayList<Song> fav)
+//    {
+//        DocumentReference docRef = dbfire.collection("Users").document(UserId);
+//        docRef.update("favouriteSongs",fav);
+//    }
 
     public DocumentReference getUserDetails(String UserId)
     {

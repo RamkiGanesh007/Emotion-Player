@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.emotion.musicplayer.model.Song;
+import com.emotion.musicplayer.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SongUtil {
-    private List<Song> mysongs;
+    private ArrayList<Song> mysongs;
     Map<String, Object> userobj;
     // Functionalities
 
@@ -55,7 +56,7 @@ public class SongUtil {
                 Uri urlSong = uriTask.getResult();
                 String songUrl = urlSong.toString();
 
-                storeSongDetails(userId,songName, songUrl, emotion);
+                storeSongDetails(userId,new Song(songName, songUrl, emotion));
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -65,29 +66,36 @@ public class SongUtil {
         });
     }
 
-    public Task<Void> storeSongDetails(String UserId,String songName, String songUrl, String emotion) {
-        Song songObj = new Song(songName,songUrl,emotion);
+    public void storeSongDetails(String UserId,Song songObj) {
         UserUtil userUtil=new UserUtil();
-        DocumentReference docRef = dbfire.collection("Users").document(UserId);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        Task<QuerySnapshot> k = dbfire.collection("Users").whereEqualTo("userId", UserId).get();
+
+        k.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        userobj = document.getData();
-                        mysongs=(ArrayList<Song>) userobj.get("MySongs");
-                        mysongs.add(songObj);
-                        userobj.put("MySong",mysongs);
-                    } else {
-                        Log.d(TAG, "No such document");
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                ArrayList<User> u;
+                u=(ArrayList<User>) k.getResult().toObjects(User.class);
+                User userObj=u.get(0);
+                mysongs=userObj.getMySongs();
+                mysongs.add(songObj);
+                userObj.setMySongs(mysongs);
+                userUtil.getDocRef(UserId).update("favouriteSongs",userObj.getFavouriteSongs()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
                     }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
+                });
+                userUtil.getDocRef(UserId).update("mySongs",mysongs).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                    }
+                });
+
+//                userUtil.updateUserList(UserId,userObj.getFavouriteSongs(),mysongs);
             }
         });
-        return dbfire.collection("Users").document(UserId).update(userobj);
+        return ;
     }
 
     public Task<QuerySnapshot> fetchAllSongs(String UserId) {

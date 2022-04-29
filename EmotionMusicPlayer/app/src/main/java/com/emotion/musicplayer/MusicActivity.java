@@ -1,6 +1,4 @@
-    package com.emotion.musicplayer;
-
-import static android.content.ContentValues.TAG;
+package com.emotion.musicplayer;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -76,12 +74,12 @@ public class MusicActivity extends AppCompatActivity  {
     static String songName;
     String emotion;
     LoadingAcitvity loadingAcitvity;
-    private String id;
+    private String userId;
     private Map<String, Object> userobj;
 
     private void getMusic() {
 
-        Task<QuerySnapshot> Allsongstask= userUtil.fetchAllSongs(id).get();
+        Task<QuerySnapshot> Allsongstask= userUtil.getUser(userId).get();
 
         Allsongstask.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -108,8 +106,6 @@ public class MusicActivity extends AppCompatActivity  {
     }
 
     class Threadt extends Thread implements NavigationView.OnNavigationItemSelectedListener{
-
-
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -236,7 +232,7 @@ public class MusicActivity extends AppCompatActivity  {
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(MusicActivity.this,drawerLayout,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
             drawerLayout.addDrawerListener(toggle);
             toggle.syncState();
-            Task<QuerySnapshot> Allsongstask= userUtil.fetchAllSongs(id).get();
+            Task<QuerySnapshot> Allsongstask= userUtil.getUser(userId).get();
 
             Allsongstask.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -245,8 +241,6 @@ public class MusicActivity extends AppCompatActivity  {
                     u=(ArrayList<User>) task.getResult().toObjects(User.class);
 
                     User k=u.get(0);
-//                    k.getMySongs()
-//                    updateEmotionlist(allsongslist);
                     allsongslist = k.getMySongs();
                     updateEmotionlist(allsongslist);
 
@@ -303,15 +297,13 @@ public class MusicActivity extends AppCompatActivity  {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                     songName = mySongs.get(position).getSongName();
                     startActivityForResult(new Intent(getApplicationContext(),PlayerActivity.class)
                             .putExtra("songs", allsongslist)
                             .putExtra("songname",songName)
                             .putExtra("favSongs",music.get("FavouriteSongs"))
-                            .putExtra("pos", position),1);
-
-                    //Changes done here
+                            .putExtra("pos", position)
+                            .putExtra("id",userId),1);
                 }
             });
         }
@@ -330,7 +322,8 @@ public class MusicActivity extends AppCompatActivity  {
             {
                 songName=data.getStringExtra(PlayerActivity.EXTRA_NAME);
                 position=data.getIntExtra("pos",0);
-
+                Bundle bundle = data.getExtras();
+                favSongs=(ArrayList) bundle.getParcelableArrayList("favsongs");
                 for(String i:new ArrayList<>(Arrays.asList("Happy","Sad","Neutral","Angry"))) {
                     if (songName.contains(i)) {
                         songName = songName.substring(7);
@@ -366,7 +359,7 @@ public class MusicActivity extends AppCompatActivity  {
         userUtil=new UserUtil();
         Intent i=getIntent();
         Bundle bundle=i.getExtras();
-        id= Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
+        userId= Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
 
         emotion=i.getStringExtra("emotion");
 
