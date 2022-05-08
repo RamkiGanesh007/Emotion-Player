@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -63,6 +64,21 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Permissions Granted!!", Toast.LENGTH_SHORT).show();
                             String id=Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
                             UserUtil userUtil=new UserUtil();
+
+                            userUtil.getUser(id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Log.d("TAG", document.getId() + " => " + document.getData());
+                                        }
+                                    } else {
+                                        Log.d("TAG", "Error getting documents: ", task.getException());
+                                    }
+                                }
+                            });
+
+
                             Task<QuerySnapshot> task1 = userUtil.getUser(id).get();
                             task1.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
@@ -75,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                                         Log.d("TAG", "onPermissionsChecked: " + "User Not Exists!!");
                                         return ;
                                     }
-                                    Log.d("TAG", "onPermissionsChecked: " + "User is Existing");
+                                    Log.d("TAG", "onPermissio   nsChecked: " + "User is Existing");
                                     return ;
                                 }
                         });

@@ -69,21 +69,20 @@ public class CustomizePlaylistActivity extends AppCompatActivity implements Emoj
         switch(emoji_id)
         {
             case 0:
-                sltd="Angry  ";
-
+                music.get(e_position).setEmotion("Angry");
+                img.setBackgroundResource(R.drawable.angry_emoji);
                 break;
             case 1:
-                sltd="Sad    ";
-
-
+                music.get(e_position).setEmotion("Sad");
+                img.setBackgroundResource(R.drawable.sad_emoji);
                 break;
             case 2:
-                sltd="Happy  ";
-
+                music.get(e_position).setEmotion("Happy");
+                img.setBackgroundResource(R.drawable.happy_emoji);
                 break;
             case 3:
-                sltd="Neutral";
-
+                music.get(e_position).setEmotion("Neutral");
+                img.setBackgroundResource(R.drawable.neutral_emoji);
                 break;
         }
         e_position=Integer.MIN_VALUE;
@@ -101,6 +100,7 @@ public class CustomizePlaylistActivity extends AppCompatActivity implements Emoj
         if(item.getItemId()==android.R.id.home)
         {
             Intent resultIntent=new Intent(CustomizePlaylistActivity.this, MusicActivity.class);
+            resultIntent.putExtra("mysongs",music);
             setResult(RESULT_OK,resultIntent);
             finish();
         }
@@ -180,8 +180,8 @@ public class CustomizePlaylistActivity extends AppCompatActivity implements Emoj
             TextView textsong = view.findViewById(R.id.songname);
             ImageView emoview = view.findViewById(R.id.emotion);
             textsong.setSelected(true);
-            String emotion=items[position].substring(0,7).trim();
-            textsong.setText(items[position].substring(7));
+            String emotion=music.get(position).getEmotion();
+            textsong.setText(music.get(position).getSongName());
             emoview.setImageDrawable(null);
             switch (emotion)
             {
@@ -198,7 +198,6 @@ public class CustomizePlaylistActivity extends AppCompatActivity implements Emoj
                     emoview.setBackgroundResource(R.drawable.angry_emoji);
                     break;
             }
-
             return view;
         }
     }

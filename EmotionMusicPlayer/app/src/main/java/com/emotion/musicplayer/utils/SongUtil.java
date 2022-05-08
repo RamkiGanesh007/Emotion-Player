@@ -56,7 +56,7 @@ public class SongUtil {
                 Uri urlSong = uriTask.getResult();
                 String songUrl = urlSong.toString();
 
-                storeSongDetails(userId,new Song(songName, songUrl, emotion));
+                storeSongDetails(userId,new Song(songName, songUrl, emotion,"No"));
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

@@ -10,9 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
@@ -33,9 +31,6 @@ import com.emotion.musicplayer.utils.UserUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -43,11 +38,6 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,14 +58,12 @@ public class MusicActivity extends AppCompatActivity  {
     static ArrayList<Song> mySongs;
     ArrayList<Song> allsongslist;
     ArrayList<Song> emotionlist;
-    static ArrayList<Song> AllSongs;
     static Map<String,ArrayList<Song>> music;
     static ArrayList<Song> favSongs;
     static String songName;
     String emotion;
     LoadingAcitvity loadingAcitvity;
     private String userId;
-    private Map<String, Object> userobj;
 
     private void getMusic() {
 
@@ -90,18 +78,26 @@ public class MusicActivity extends AppCompatActivity  {
                 User k=u.get(0);
                 allsongslist = k.getMySongs();
                 updateEmotionlist(allsongslist);
-
+                updateListView(allsongslist);
         }
     });
     }
 
     private static void updateEmotionlist(ArrayList<Song> allsongslist) {
-        ArrayList<Song>  dummy;
+        ArrayList<Song> dummy;
+        ArrayList<Song> f;
         for(Song i:allsongslist)
         {
             dummy=music.get(i.getEmotion());
+            f=music.get("FavouriteSongs");
             dummy.add(i);
+            if(i.getIsFavourite().equals("Yes"))
+            {
+                f.add(i);
+            }
+            music.put("FavouriteSongs",f);
             music.put(i.getEmotion(),dummy);
+
         }
     }
 
@@ -145,28 +141,16 @@ public class MusicActivity extends AppCompatActivity  {
 
                     setTitle("My Favourites");
                     mySongs=music.get("FavouriteSongs");
-                    if(mySongs!=null) {
-                        items = new String[mySongs.size()];
-                        for (int i = 0; i < mySongs.size(); i++) {
-                            for (String b : emotions) {
-                                if (mySongs.get(i).getSongName().contains(b)) {
-                                    items[i] = mySongs.get(i).getSongName();
-                                    break;
-                                } else
-                                    items[i] = mySongs.get(i).getSongName();
-                            }
-                        }
-                        customAdapter customAdapter = new customAdapter();
-                        listView.setAdapter(customAdapter);
-                        flg =false;
-                    }
 
+                    updateListView(mySongs);
+
+                    flg =false;
                     break;
                 case R.id.upload:
                     intent = new Intent(MusicActivity.this,UploadSongsActivity.class);
                     startActivityForResult(intent,10);
-                    getMusic();
                     updateEmotionlist(allsongslist);
+                    updateListView(allsongslist);
                     mySongs=allsongslist;
                     break;
 
@@ -176,9 +160,8 @@ public class MusicActivity extends AppCompatActivity  {
                     break;
                 case R.id.c_playlist:
                     intent = new Intent(MusicActivity.this,CustomizePlaylistActivity.class);
-
                     intent.putExtra("Songs",allsongslist);
-                    startActivity(intent);
+                    startActivityForResult(intent,2);
                     break;
                 case R.id.manage_media:
                     intent = new Intent(MusicActivity.this,ManageMediaActivity.class);
@@ -222,9 +205,10 @@ public class MusicActivity extends AppCompatActivity  {
                 public void run() {
                     loadingAcitvity.startLoading();
 
+                    setSupportActionBar(toolbar);
+
                 }
             });
-            setSupportActionBar(toolbar);
             drawerLayout = findViewById(R.id.drawer_layout);
 
             NavigationView navigationView = findViewById(R.id.nav_view);
@@ -239,8 +223,8 @@ public class MusicActivity extends AppCompatActivity  {
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     ArrayList<User> u;
                     u=(ArrayList<User>) task.getResult().toObjects(User.class);
-
                     User k=u.get(0);
+
                     allsongslist = k.getMySongs();
                     updateEmotionlist(allsongslist);
 
@@ -287,8 +271,8 @@ public class MusicActivity extends AppCompatActivity  {
                             startActivityForResult(new Intent(getApplicationContext(), PlayerActivity.class)
                                     .putExtra("songs", emotionlist)
                                     .putExtra("songname", songName)
-                                    .putExtra("favSongs",music.get("FavouriteSongs"))
-                                    .putExtra("pos", 0), 1);
+                                    .putExtra("pos", 0)
+                                    .putExtra("id",userId), 1);
                         }
 
                     }});
@@ -301,7 +285,6 @@ public class MusicActivity extends AppCompatActivity  {
                     startActivityForResult(new Intent(getApplicationContext(),PlayerActivity.class)
                             .putExtra("songs", allsongslist)
                             .putExtra("songname",songName)
-                            .putExtra("favSongs",music.get("FavouriteSongs"))
                             .putExtra("pos", position)
                             .putExtra("id",userId),1);
                 }
@@ -311,32 +294,43 @@ public class MusicActivity extends AppCompatActivity  {
 
     }
 
+    private void updateListView(ArrayList<Song> mySongs) {
+        listView.setAdapter(null);
+        if(mySongs!=null) {
+            items = new String[mySongs.size()];
+            int i=0;
+            for(Song k:mySongs){
+                items[i++]=k.getSongName();
+            }
+            customAdapter customAdapter = new customAdapter();
+            listView.setAdapter(customAdapter);
+        }
+    }
+
     RelativeLayout rv;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-
-        if(requestCode==1)
+        if(requestCode==1 && resultCode==RESULT_OK)
         {
-            if(resultCode==RESULT_OK)
-            {
                 songName=data.getStringExtra(PlayerActivity.EXTRA_NAME);
                 position=data.getIntExtra("pos",0);
                 Bundle bundle = data.getExtras();
-                favSongs=(ArrayList) bundle.getParcelableArrayList("favsongs");
-                for(String i:new ArrayList<>(Arrays.asList("Happy","Sad","Neutral","Angry"))) {
-                    if (songName.contains(i)) {
-                        songName = songName.substring(7);
-                        break;
-                    }
-                }
+                allsongslist=(ArrayList) bundle.getParcelableArrayList("mysongs");
+                updateEmotionlist(allsongslist);
+                updateListView(allsongslist);
                 hbtnpause.setBackgroundResource(R.drawable.ic_pause_circle);
                 txtnp.setText(songName);
                 txtnp.setSelected(true);
-            }
-
         }
-        if(resultCode==10)
+        if(requestCode==2 && resultCode == RESULT_OK)
+        {
+            Bundle bundle = data.getExtras();
+            allsongslist=(ArrayList) bundle.getParcelableArrayList("mysongs");
+            updateEmotionlist(allsongslist);
+            updateListView(allsongslist);
+        }
+        if(requestCode==10)
         {
             getMusic();
             listView.setAdapter(null);

@@ -53,31 +53,16 @@ public class UserUtil {
         });
     }
 
-
-
     public Query getUser(String UserId)
     {
-        return dbfire.collection("Users").whereEqualTo("userId",UserId);
+        return dbfire.collection("Users");
     }
     public DocumentReference getDocRef(String UserId) {
         return  dbfire.collection("Users").document(UserId);
     }
-//    public void updateUserList(String UserId, ArrayList<Song> fav, ArrayList<Song> mysongs)
-//    {
-//        // Update an existing document
-//        DocumentReference docRef = dbfire.collection("Users").document(UserId);
-//        docRef.update("favouriteSongs",fav);
-//        docRef.update("mySongs",mysongs);
-//    }
-//
-//    public void updateFavourites(String UserId,ArrayList<Song> fav)
-//    {
-//        DocumentReference docRef = dbfire.collection("Users").document(UserId);
-//        docRef.update("favouriteSongs",fav);
-//    }
 
-    public DocumentReference getUserDetails(String UserId)
+    public Query getFavourites(String UserId)
     {
-        return dbfire.collection("Users").document(UserId);
+        return dbfire.collection("Users").whereEqualTo("userId",UserId).whereEqualTo("isFavourite","Yes");
     }
 }

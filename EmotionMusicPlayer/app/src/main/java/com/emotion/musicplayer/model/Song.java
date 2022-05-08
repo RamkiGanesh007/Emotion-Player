@@ -4,10 +4,18 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 public class Song implements Serializable {
-    private String songName,songUrl,emotion;
+    private String songName;
 
-    public Song() {
+    public Song(String songName, String songUrl, String emotion, String isFavourite) {
+        this.songName = songName;
+        this.songUrl = songUrl;
+        this.emotion = emotion;
+        this.isFavourite = isFavourite;
     }
+
+    private String songUrl;
+    private String emotion;
+    private String isFavourite;
 
     @Override
     public String toString() {
@@ -15,14 +23,21 @@ public class Song implements Serializable {
                 "songName='" + songName + '\'' +
                 ", songUrl='" + songUrl + '\'' +
                 ", emotion='" + emotion + '\'' +
+                ", isFavourite='" + isFavourite + '\'' +
                 '}';
     }
-
-    public Song(String songName, String songUrl, String emotion) {
-        this.songName = songName;
-        this.songUrl = songUrl;
-        this.emotion = emotion;
+    public String getIsFavourite() {
+        return isFavourite;
     }
+
+    public void setIsFavourite(String isFavourite) {
+        this.isFavourite = isFavourite;
+    }
+
+
+    public Song() {
+    }
+
 
     public String getSongName() {
         return songName;

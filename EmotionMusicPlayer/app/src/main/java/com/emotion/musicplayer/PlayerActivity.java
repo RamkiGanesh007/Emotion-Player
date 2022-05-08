@@ -55,7 +55,6 @@ public class PlayerActivity extends AppCompatActivity{
 
     int position;
     ArrayList<Song> mySongs;
-    ArrayList<Song> favSongs;
 
     private final Handler mainHandler=new Handler();
 
@@ -113,7 +112,6 @@ public class PlayerActivity extends AppCompatActivity{
                 Log.i("Plact Returns: ", "" + i.getExtras());
 
                 mySongs=(ArrayList) bundle.getParcelableArrayList("songs");
-                favSongs = (ArrayList) bundle.getParcelableArrayList("favSongs");
 
 
                 String songName = i.getStringExtra("songname");
@@ -126,12 +124,10 @@ public class PlayerActivity extends AppCompatActivity{
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (favSongs != null) {
-                            if (favSongs.contains(mySongs.get(position))) {
+                            if (mySongs.get(position).getIsFavourite().equals("Yes")) {
                                 btnfav.setBackgroundResource(R.drawable.ic_favorite);
                             } else {
                                 btnfav.setBackgroundResource(R.drawable.ic_favorite_blank);
-                            }
                         }
                     }
                 });
@@ -337,13 +333,13 @@ public class PlayerActivity extends AppCompatActivity{
                     public void onClick(View v) {
                         if (btnfav.getBackground().getConstantState().equals(getDrawable(R.drawable.ic_favorite_blank).getConstantState())) {
                             btnfav.setBackgroundResource(R.drawable.ic_favorite);
-                            favSongs.add(mySongs.get(position));
+                            mySongs.get(position).setIsFavourite("Yes");
                         } else
                         {
                             btnfav.setBackgroundResource(R.drawable.ic_favorite_blank);
-                            favSongs.remove(mySongs.get(position));
+                            mySongs.get(position).setIsFavourite("No");
                         }
-                        new UserUtil().getDocRef(i.getStringExtra("id")).update("favouriteSongs",favSongs).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        new UserUtil().getDocRef(i.getStringExtra("id")).update("mySongs",mySongs).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
 
@@ -359,7 +355,7 @@ public class PlayerActivity extends AppCompatActivity{
                         sname = mySongs.get(position).getSongName();
                         resultIntent.putExtra(EXTRA_NAME, sname);
                         resultIntent.putExtra("pos",position);
-                        resultIntent.putExtra("favsongs",favSongs);
+                        resultIntent.putExtra("mysongs",mySongs);
                         setResult(RESULT_OK,resultIntent);
                         finish();
                     }
@@ -395,6 +391,7 @@ public class PlayerActivity extends AppCompatActivity{
                     sname = mySongs.get(position).getSongName();
                     resultIntent.putExtra("songname", sname);
                     resultIntent.putExtra("pos",position);
+                    resultIntent.putExtra("mysongs",mySongs);
                     setResult(RESULT_OK,resultIntent);
                     finish();
         }

@@ -120,7 +120,7 @@ public class UploadSongsActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Songs Uploaded Successfully!!", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent();
-        setResult(10, intent);
+        setResult(RESULT_OK, intent);
         finish();
 
     }

@@ -122,15 +122,15 @@
                 android:layout_toLeftOf="@id/playbtn"
                 android:background="@drawable/ic_previous">
             </Button>
+
             <Button
+                android:id="@+id/btnfav"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:id="@+id/btnfav"
                 android:layout_marginTop="20dp"
                 android:layout_marginRight="15dp"
                 android:layout_toLeftOf="@id/btnprev"
-                android:background="@drawable/ic_favorite_blank">
-            </Button>
+                android:background="@drawable/ic_favorite_blank"></Button>
 
             <Button
                 android:layout_width="50dp"
